@@ -1,0 +1,248 @@
+{% render 'plan-c-hero',
+  image: section.settings.image,
+  headline_prefix: section.settings.headline_prefix,
+  headline_suffix: section.settings.headline_suffix,
+  body: section.settings.body,
+  headline_color: section.settings.headline_color,
+  accent_color: section.settings.accent_color,
+  accent_border_color: section.settings.accent_border_color,
+  body_color: section.settings.body_color,
+  body_font_weight: section.settings.body_font_weight,
+  card_background: section.settings.card_background,
+  offset_color: section.settings.offset_color,
+  card_padding: section.settings.card_padding,
+  media_min_height_mobile: section.settings.media_min_height_mobile,
+  media_min_height_tablet: section.settings.media_min_height_tablet,
+  media_min_height_desktop: section.settings.media_min_height_desktop,
+  media_overlay_color: section.settings.media_overlay_color,
+  media_overlay_opacity: section.settings.media_overlay_opacity,
+  image_object_position: section.settings.image_object_position,
+  sticky_on_scroll: section.settings.sticky_on_scroll,
+  section_margin_top: section.settings.section_margin_top,
+  section_margin_bottom: section.settings.section_margin_bottom,
+  inner_padding_x: section.settings.inner_padding_x,
+  inner_padding_y: section.settings.inner_padding_y
+%}
+
+{% schema %}
+{
+  "name": "Plan C hero",
+  "tag": "section",
+  "class": "section-plan-c-hero",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Reusable hero: image, card, headline, and rich text body. All fields are optional — drive content from metafields or custom Liquid via dynamic sources in the editor."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    },
+    {
+      "type": "select",
+      "id": "image_object_position",
+      "label": "Image focal point",
+      "default": "center center",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center", "label": "Left" },
+        { "value": "right center", "label": "Right" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Media height (responsive)"
+    },
+    {
+      "type": "range",
+      "id": "media_min_height_mobile",
+      "min": 160,
+      "max": 560,
+      "step": 8,
+      "unit": "px",
+      "label": "Min height — mobile",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "media_min_height_tablet",
+      "min": 200,
+      "max": 640,
+      "step": 8,
+      "unit": "px",
+      "label": "Min height — tablet",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "media_min_height_desktop",
+      "min": 280,
+      "max": 800,
+      "step": 8,
+      "unit": "px",
+      "label": "Min height — desktop",
+      "default": 480
+    },
+    {
+      "type": "header",
+      "content": "Media overlay"
+    },
+    {
+      "type": "color",
+      "id": "media_overlay_color",
+      "label": "Overlay color (optional)"
+    },
+    {
+      "type": "range",
+      "id": "media_overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Card & typography"
+    },
+    {
+      "type": "text",
+      "id": "headline_prefix",
+      "label": "Headline — first part (navy line)",
+      "info": "Optional. Connect a dynamic source for CMS-driven copy."
+    },
+    {
+      "type": "text",
+      "id": "headline_suffix",
+      "label": "Headline — accent line",
+      "info": "Optional."
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline first part color",
+      "default": "#1b2b4a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Headline accent color",
+      "default": "#1ba8a8"
+    },
+    {
+      "type": "color",
+      "id": "accent_border_color",
+      "label": "Accent underline color",
+      "default": "#1ba8a8"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "info": "Optional rich text."
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body text color",
+      "default": "#111111"
+    },
+    {
+      "type": "select",
+      "id": "body_font_weight",
+      "label": "Body font weight",
+      "default": "400",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 12,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "offset_color",
+      "label": "Card shadow offset color",
+      "default": "#e85d4c"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_on_scroll",
+      "label": "Sticky hero (experimental)",
+      "default": false,
+      "info": "Keeps hero visible at top while scrolling; may overlap content on short pages."
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section margin bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "inner_padding_x",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Content area padding horizontal",
+      "default": 0,
+      "info": "0 uses theme default (responsive clamp). Set a value to lock padding in px."
+    },
+    {
+      "type": "range",
+      "id": "inner_padding_y",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Content area padding vertical",
+      "default": 0,
+      "info": "0 uses theme default clamp."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Plan C hero"
+    }
+  ]
+}
+{% endschema %}

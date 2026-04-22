@@ -1,0 +1,309 @@
+{% render 'plan-c-header',
+  announcement: section.settings.announcement,
+  announcement_bg: section.settings.announcement_bg,
+  bar_background: section.settings.bar_background,
+  bar_border_color: section.settings.bar_border_color,
+  sticky_header: section.settings.sticky_header,
+  logo: section.settings.logo,
+  logo_max_width: section.settings.logo_max_width,
+  logo_max_height: section.settings.logo_max_height,
+  logo_text_plan: section.settings.logo_text_plan,
+  logo_text_c: section.settings.logo_text_c,
+  cta_text: section.settings.cta_text,
+  cta_url: section.settings.cta_url,
+  menu: section.settings.menu,
+  nav_font: section.settings.nav_font,
+  nav_font_size: section.settings.nav_font_size,
+  nav_font_weight: section.settings.nav_font_weight,
+  nav_letter_spacing: section.settings.nav_letter_spacing,
+  nav_text_transform: section.settings.nav_text_transform,
+  nav_line_height: section.settings.nav_line_height,
+  nav_link_color: section.settings.nav_link_color,
+  nav_link_hover_color: section.settings.nav_link_hover_color,
+  section_margin_top: section.settings.section_margin_top,
+  section_margin_bottom: section.settings.section_margin_bottom,
+  announcement_padding_y: section.settings.announcement_padding_y,
+  announcement_padding_x: section.settings.announcement_padding_x,
+  bar_padding_y: section.settings.bar_padding_y,
+  bar_padding_x: section.settings.bar_padding_x,
+  nav_row_padding_y: section.settings.nav_row_padding_y,
+  nav_row_padding_x: section.settings.nav_row_padding_x
+%}
+
+{% schema %}
+{
+  "name": "Plan C header",
+  "tag": "header",
+  "class": "section-plan-c-header",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "announcement",
+      "label": "Announcement",
+      "info": "Rich text (e.g. paragraphs). Leave empty to hide the bar. From custom Liquid, pass HTML via capture into the `announcement` render argument."
+    },
+    {
+      "type": "color",
+      "id": "announcement_bg",
+      "label": "Announcement background",
+      "info": "Optional. Theme CSS fallback applies if unset."
+    },
+    {
+      "type": "header",
+      "content": "Main bar"
+    },
+    {
+      "type": "color",
+      "id": "bar_background",
+      "label": "Bar background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "bar_border_color",
+      "label": "Bar bottom border",
+      "default": "#e8e8e8"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Sticky main bar on scroll",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "paragraph",
+      "content": "Uses your theme logo from Online store > Themes > Customize > Theme settings > Logo when the override below is empty."
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo override (optional)",
+      "info": "Replaces the theme settings logo for this header only."
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "min": 40,
+      "max": 400,
+      "step": 4,
+      "unit": "px",
+      "label": "Logo max width",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "logo_max_height",
+      "min": 24,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo max height",
+      "default": 56
+    },
+    {
+      "type": "text",
+      "id": "logo_text_plan",
+      "label": "Text logo — first part (fallback)",
+      "info": "Shown only when no theme logo and no override image."
+    },
+    {
+      "type": "text",
+      "id": "logo_text_c",
+      "label": "Text logo — accent letter (fallback)"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button label",
+      "info": "Leave empty to hide the button."
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation menu",
+      "info": "Optional. If empty, the nav renders no links (use a menu or custom Liquid)."
+    },
+    {
+      "type": "header",
+      "content": "Navigation typography"
+    },
+    {
+      "type": "paragraph",
+      "content": "Font picker uses Shopify’s font library (includes Google Fonts). Shopify injects @font-face when needed. If Horizon still overrides links, Plan C uses a scoped rule with higher priority."
+    },
+    {
+      "type": "font_picker",
+      "id": "nav_font",
+      "label": "Navigation font",
+      "default": "lato_n4",
+      "info": "Shopify font library (includes Google Fonts). Fonts load automatically via font_face."
+    },
+    {
+      "type": "range",
+      "id": "nav_font_size",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Nav font size",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "nav_font_weight",
+      "label": "Nav font weight",
+      "default": "600",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "nav_letter_spacing",
+      "label": "Letter spacing",
+      "default": "wide",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "tight", "label": "Tight" },
+        { "value": "normal", "label": "Normal" },
+        { "value": "wide", "label": "Wide (caps menus)" },
+        { "value": "extra", "label": "Extra wide" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "nav_text_transform",
+      "label": "Text transform",
+      "default": "uppercase",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "nav_line_height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.4
+    },
+    {
+      "type": "color",
+      "id": "nav_link_color",
+      "label": "Nav link color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "nav_link_hover_color",
+      "label": "Nav link hover color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Spacing (margins & padding)"
+    },
+    {
+      "type": "range",
+      "id": "section_margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Header margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Header margin bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "announcement_padding_y",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Announcement padding vertical",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "announcement_padding_x",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Announcement padding horizontal",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "bar_padding_y",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Main bar padding vertical",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "bar_padding_x",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Main bar padding horizontal",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "nav_row_padding_y",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Nav row padding vertical",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "nav_row_padding_x",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Nav row padding horizontal",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Plan C header"
+    }
+  ]
+}
+{% endschema %}

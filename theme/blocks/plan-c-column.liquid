@@ -1,0 +1,167 @@
+{% doc %}
+  Column shell only (Elementor-style column): padding and optional background color/image/overlay.
+  Heading and Paragraph are standalone blocks at the section row — add them as siblings of Column, not nested here.
+{% enddoc %}
+
+{% liquid
+  assign col_overlay_o = block.settings.overlay_opacity | times: 1 | divided_by: 100.0
+  assign pad_y = block.settings.padding_y | default: 0
+  assign pad_x = block.settings.padding_x | default: 0
+  assign col_mt = block.settings.margin_top | default: 0
+  assign col_mb = block.settings.margin_bottom | default: 0
+%}
+
+<div
+  class="plan-c-layout__cell plan-c-column{% if block.settings.background_color != blank or block.settings.background_image != blank %} plan-c-column--has-bg{% endif %}"
+  {{ block.shopify_attributes }}
+  style="
+    --plan-c-col-mt: {{ col_mt }}px;
+    --plan-c-col-mb: {{ col_mb }}px;
+    {% if block.settings.background_color != blank %}background-color: {{ block.settings.background_color }};{% endif %}
+    {% if block.settings.background_position != blank %}--plan-c-col-bg-pos: {{ block.settings.background_position }};{% endif %}
+    --plan-c-col-bg-size: {{ block.settings.background_size }};
+    {% if block.settings.background_overlay != blank %}--plan-c-col-overlay: {{ block.settings.background_overlay }};{% endif %}
+    --plan-c-col-overlay-o: {{ col_overlay_o }};
+  "
+>
+  {% if block.settings.background_image != blank %}
+    <div class="plan-c-column__bg" aria-hidden="true">
+      {{
+        block.settings.background_image
+        | image_url: width: 1600
+        | image_tag:
+          class: 'plan-c-column__bg-img',
+          loading: 'lazy',
+          widths: '375, 750, 1100, 1600',
+          sizes: '(max-width: 749px) 100vw, 50vw'
+      }}
+      {% if block.settings.background_overlay != blank %}
+        <div class="plan-c-column__bg-overlay"></div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div
+    class="plan-c-layout__cell-inner plan-c-column__inner"
+    style="padding: {{ pad_y }}px {{ pad_x }}px;"
+  >
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Column",
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Structural column only. Place Heading and Paragraph blocks at the same row level as this column (not inside it)."
+    },
+    {
+      "type": "header",
+      "content": "Outer spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin bottom",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Padding (column shell)"
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_x",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color (optional)"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image (optional)"
+    },
+    {
+      "type": "select",
+      "id": "background_size",
+      "label": "Background image fit",
+      "default": "cover",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_position",
+      "label": "Background image position",
+      "default": "center center",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center", "label": "Left" },
+        { "value": "right center", "label": "Right" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_overlay",
+      "label": "Image overlay color (optional)"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Image overlay opacity",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

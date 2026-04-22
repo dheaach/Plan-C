@@ -1,0 +1,82 @@
+/**
+ * Base typography + site font (Lato). Breakpoints: mobile ≤749px, tablet 750–989px, desktop ≥990px.
+ */
+
+:root {
+  --font-family-site: 'Lato', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    sans-serif;
+
+  /* Desktop (default) */
+  --font-size-h1: 60px;
+  --font-size-h2: 60px;
+  --font-size-h3: 48px;
+  --font-size-h4: 28px;
+  --font-size-body: 24px;
+}
+
+/* Tablet */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  :root {
+    --font-size-h1: 48px;
+    --font-size-h2: 48px;
+    --font-size-h3: 40px;
+    --font-size-h4: 24px;
+    --font-size-body: 20px;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 749px) {
+  :root {
+    --font-size-h1: 36px;
+    --font-size-h2: 36px;
+    --font-size-h3: 32px;
+    --font-size-h4: 22px;
+    --font-size-body: 18px;
+  }
+}
+
+body {
+  font-size: var(--font-size-body);
+  font-family: var(--font-family-site);
+}
+
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4 {
+  font-family: var(--font-family-site);
+}
+
+h1,
+.h1 {
+  font-size: var(--font-size-h1);
+}
+
+h2,
+.h2 {
+  font-size: var(--font-size-h2);
+}
+
+h3,
+.h3 {
+  font-size: var(--font-size-h3);
+}
+
+h4,
+.h4 {
+  font-size: var(--font-size-h4);
+}
+
+.plan-c-header,
+.plan-c-hero,
+.plan-c-layout,
+.plan-c-os-container,
+.plan-c-widget,
+.plan-c-column-row {
+  font-family: var(--font-family-site);
+}

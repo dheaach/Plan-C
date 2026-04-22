@@ -1,0 +1,89 @@
+{% comment %}
+  Reusable Plan C hero — pass image, headlines, body, colors, media heights, overlay, focal position.
+  All content is driven by the parent section or custom Liquid (no hardcoded marketing copy).
+{% endcomment %}
+
+{% liquid
+  assign oc = media_overlay_color | default: ''
+  assign oo = media_overlay_opacity | default: 0 | times: 1 | divided_by: 100.0
+  assign obj_pos = image_object_position | default: 'center center'
+  assign hn = headline_color | default: ''
+  assign ha = accent_color | default: ''
+  assign hab = accent_border_color | default: ''
+  assign bc = body_color | default: ''
+  assign bw = body_font_weight | default: ''
+  assign cbg = card_background | default: ''
+  assign off = offset_color | default: ''
+  assign hmt = section_margin_top | default: 0
+  assign hmb = section_margin_bottom | default: 0
+  assign hipx = inner_padding_x | default: 0
+  assign hipy = inner_padding_y | default: 0
+%}
+
+<div
+  class="plan-c-hero{% if sticky_on_scroll %} plan-c-hero--sticky{% endif %}"
+  style="
+    --plan-c-hero-mt: {{ hmt }}px;
+    --plan-c-hero-mb: {{ hmb }}px;
+    {% if hipx > 0 %}--plan-c-hero-inner-px: {{ hipx }}px; --plan-c-hero-inner-pl: {{ hipx }}px;{% endif %}
+    {% if hipy > 0 %}--plan-c-hero-inner-py: {{ hipy }}px;{% endif %}
+    {% if hn != blank %}--plan-c-hero-navy: {{ hn }};{% endif %}
+    {% if ha != blank %}--plan-c-hero-teal: {{ ha }};{% endif %}
+    {% if hab != blank %}--plan-c-hero-teal-border: {{ hab }};{% endif %}
+    {% if off != blank %}--plan-c-hero-offset: {{ off }};{% endif %}
+    {% if media_min_height_mobile != blank %}--plan-c-hero-mh-m: {{ media_min_height_mobile }}px;{% endif %}
+    {% if media_min_height_tablet != blank %}--plan-c-hero-mh-t: {{ media_min_height_tablet }}px;{% endif %}
+    {% if media_min_height_desktop != blank %}--plan-c-hero-mh-d: {{ media_min_height_desktop }}px;{% endif %}
+    {% if card_padding != blank %}--plan-c-hero-card-pad: {{ card_padding }}px;{% endif %}
+  "
+>
+  <div class="plan-c-hero__media" style="{% if obj_pos != blank %}--plan-c-hero-object-pos: {{ obj_pos }};{% endif %}">
+    {% if image != blank %}
+      {% liquid
+        assign hero_alt = image.alt | default: shop.name
+      %}
+      {{
+        image
+        | image_url: width: 3840
+        | image_tag:
+          loading: 'eager',
+          fetchpriority: 'high',
+          sizes: '100vw',
+          widths: '375, 550, 750, 1100, 1500, 2000, 3000, 3840',
+          alt: hero_alt,
+          class: 'plan-c-hero__img'
+      }}
+    {% elsif request.design_mode %}
+      <div class="plan-c-hero__placeholder">Add a background image in the section settings.</div>
+    {% endif %}
+    {% if oc != blank %}
+      <div class="plan-c-hero__media-overlay" style="background-color: {{ oc }}; opacity: {{ oo }};"></div>
+    {% endif %}
+  </div>
+
+  <div class="plan-c-hero__inner">
+    <div
+      class="plan-c-hero__card"
+      style="{% if cbg != blank %}background: {{ cbg }};{% endif %}"
+    >
+      {% if headline_prefix != blank or headline_suffix != blank %}
+        <h1 class="plan-c-hero__title">
+          {% if headline_prefix != blank %}
+            <span class="plan-c-hero__title-line">{{ headline_prefix | escape }}</span>
+          {% endif %}
+          {% if headline_suffix != blank %}
+            <span class="plan-c-hero__title-accent">{{ headline_suffix | escape }}</span>
+          {% endif %}
+        </h1>
+      {% endif %}
+      {% if body != blank %}
+        <div
+          class="plan-c-hero__body rte"
+          style="{% if bc != blank %}color: {{ bc }};{% endif %}{% if bw != blank %}font-weight: {{ bw }};{% endif %}"
+        >
+          {{ body }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

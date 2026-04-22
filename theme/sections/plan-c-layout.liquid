@@ -1,0 +1,389 @@
+{% comment %}
+  Plan C layout row: flex or grid shell. Column = structural shell only. Heading and Paragraph are standalone blocks at this row level (siblings of Column), each with its own settings.
+{% endcomment %}
+
+{% liquid
+  assign use_flex = false
+  if section.settings.layout_type == 'flex'
+    assign use_flex = true
+  endif
+  assign tablet = section.settings.tablet_columns
+  assign stack_mobile = section.settings.stack_on_mobile
+  assign style_variant = section.settings.cell_style
+  assign grid_cols = section.blocks.size
+  if grid_cols < 1
+    assign grid_cols = 1
+  endif
+  assign layout_overlay_o = section.settings.background_overlay_opacity | times: 1 | divided_by: 100.0
+%}
+
+<div
+  class="plan-c-layout plan-c-layout--width-{{ section.settings.section_width }} plan-c-layout--style-{{ style_variant }} plan-c-layout--engine-{{ section.settings.layout_type }}{% if section.settings.background_image != blank %} plan-c-layout--has-bg-image{% endif %}"
+  style="
+    --plan-c-layout-mt: {{ section.settings.margin_top | default: 0 }}px;
+    --plan-c-layout-mb: {{ section.settings.margin_bottom | default: 0 }}px;
+    --plan-c-layout-gap: {{ section.settings.gap }}px;
+    --plan-c-layout-px: {{ section.settings.padding_x }}px;
+    --plan-c-layout-py: {{ section.settings.padding_y }}px;
+    {% if use_flex %}
+      --plan-c-flex-direction: {{ section.settings.flex_direction }};
+      --plan-c-flex-wrap: {{ section.settings.flex_wrap }};
+      --plan-c-align-content: {{ section.settings.align_content }};
+      --plan-c-justify-content: {{ section.settings.justify_content }};
+      --plan-c-align-items: {{ section.settings.align_items }};
+    {% endif %}
+    {% if section.settings.background != blank %}background-color: {{ section.settings.background }};{% endif %}
+    {% if section.settings.background_image_position != blank %}--plan-c-layout-bg-pos: {{ section.settings.background_image_position }};{% endif %}
+    --plan-c-layout-bg-size: {{ section.settings.background_image_size }};
+    {% if section.settings.background_overlay != blank %}--plan-c-layout-overlay: {{ section.settings.background_overlay }};{% endif %}
+    --plan-c-layout-overlay-o: {{ layout_overlay_o }};
+  "
+>
+  {% if section.settings.background_image != blank %}
+    <div class="plan-c-layout__bg-media" aria-hidden="true">
+      {{
+        section.settings.background_image
+        | image_url: width: 2400
+        | image_tag:
+          class: 'plan-c-layout__bg-img',
+          loading: 'lazy',
+          widths: '750, 1100, 1500, 2000, 2400',
+          sizes: '100vw'
+      }}
+      {% if section.settings.background_overlay != blank %}
+        <div class="plan-c-layout__bg-overlay"></div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="plan-c-layout__container plan-c-layout__container--content">
+    {% if section.blocks.size == 0 %}
+      <div class="plan-c-layout__placeholder">
+        {% if request.design_mode %}
+          Add Column row (many columns), single Column, Heading, or Paragraph blocks at this row level. Reorder blocks to control layout order.
+        {% else %}
+          {% assign empty_msg = section.settings.empty_message | strip %}
+          {% if empty_msg != blank %}
+            {{ empty_msg | escape }}
+          {% endif %}
+        {% endif %}
+      </div>
+    {% else %}
+      {% if use_flex %}
+        <div
+          class="plan-c-layout__row plan-c-layout__row--flex{% if section.settings.flex_equal_columns %} plan-c-layout__row--equal{% endif %}{% if stack_mobile %} plan-c-layout__row--stack-mobile{% endif %}"
+        >
+      {% else %}
+        <div
+          class="plan-c-layout__grid{% if stack_mobile %} plan-c-layout__grid--stack-mobile{% endif %}"
+          style="--plan-c-desktop-cols: {{ grid_cols }};"
+          data-desktop-cols="{{ grid_cols }}"
+          data-tablet="{{ tablet }}"
+        >
+      {% endif %}
+        {% content_for 'blocks' %}
+      {% if use_flex %}
+        </div>
+      {% else %}
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Plan C layout row",
+  "tag": "section",
+  "class": "section-plan-c-layout",
+  "max_blocks": 50,
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "plan-c-column-row"
+    },
+    {
+      "type": "plan-c-column"
+    },
+    {
+      "type": "plan-c-heading"
+    },
+    {
+      "type": "plan-c-paragraph"
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Use Column row to group many column shells, or add single Column blocks. Heading and Paragraph are separate blocks at this row level (not inside a Column)."
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Row layout engine",
+      "default": "flex",
+      "options": [
+        { "value": "flex", "label": "Flexbox (flex controls below)" },
+        { "value": "grid", "label": "CSS Grid (column count = Column blocks)" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Flexbox"
+    },
+    {
+      "type": "paragraph",
+      "content": "Used when Row layout engine is Flexbox. Grid mode uses the Grid & spacing options."
+    },
+    {
+      "type": "select",
+      "id": "flex_direction",
+      "label": "Flex direction",
+      "default": "row",
+      "options": [
+        { "value": "row", "label": "Row" },
+        { "value": "row-reverse", "label": "Row reverse" },
+        { "value": "column", "label": "Column" },
+        { "value": "column-reverse", "label": "Column reverse" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "flex_wrap",
+      "label": "Flex wrap",
+      "default": "wrap",
+      "options": [
+        { "value": "nowrap", "label": "No wrap" },
+        { "value": "wrap", "label": "Wrap" },
+        { "value": "wrap-reverse", "label": "Wrap reverse" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_content",
+      "label": "Align content",
+      "default": "stretch",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "stretch", "label": "Stretch" },
+        { "value": "space-between", "label": "Space between" },
+        { "value": "space-around", "label": "Space around" },
+        { "value": "space-evenly", "label": "Space evenly" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "justify_content",
+      "label": "Justify content",
+      "default": "flex-start",
+      "options": [
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "space-between", "label": "Space between" },
+        { "value": "space-around", "label": "Space around" },
+        { "value": "space-evenly", "label": "Space evenly" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_items",
+      "label": "Align items",
+      "default": "stretch",
+      "options": [
+        { "value": "stretch", "label": "Stretch" },
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "baseline", "label": "Baseline" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "flex_equal_columns",
+      "label": "Equal-width children (flex: 1 1 0)",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Grid & spacing"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Row width",
+      "default": "page",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "page", "label": "Page width" },
+        { "value": "narrow", "label": "Narrow" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "cell_style",
+      "label": "Cell style (columns only)",
+      "default": "card",
+      "options": [
+        { "value": "card", "label": "Card (border + background)" },
+        { "value": "plain", "label": "Plain (no box)" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background color (optional)"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Section background image (optional)"
+    },
+    {
+      "type": "select",
+      "id": "background_image_size",
+      "label": "Background image fit",
+      "default": "cover",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_image_position",
+      "label": "Background image position",
+      "default": "center center",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center", "label": "Left" },
+        { "value": "right center", "label": "Right" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_overlay",
+      "label": "Background image overlay (optional)"
+    },
+    {
+      "type": "range",
+      "id": "background_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Background overlay opacity",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 8,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between blocks / columns",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_x",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_on_mobile",
+      "label": "Stack: one column on mobile (flex: column; grid: single column)",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "tablet_columns",
+      "label": "Columns on tablet (Grid mode only)",
+      "default": "auto",
+      "options": [
+        { "value": "auto", "label": "Auto (3–4 desktop columns → 2 on tablet)" },
+        { "value": "match", "label": "Match desktop" },
+        { "value": "2", "label": "Always 2 columns" },
+        { "value": "1", "label": "Always 1 column" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section margin bottom",
+      "default": 0
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Message when empty (live store only)",
+      "default": "No blocks in this section.",
+      "info": "Enter a single space to hide the message on the storefront."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Plan C layout — flex row",
+      "settings": { "layout_type": "flex" },
+      "blocks": {},
+      "block_order": []
+    },
+    {
+      "name": "Plan C layout — two columns",
+      "settings": { "layout_type": "flex", "flex_equal_columns": true },
+      "blocks": {
+        "column_row": {
+          "type": "plan-c-column-row",
+          "settings": {
+            "equal_columns": true,
+            "gap": 16
+          },
+          "blocks": {
+            "col_a": { "type": "plan-c-column" },
+            "col_b": { "type": "plan-c-column" }
+          },
+          "block_order": ["col_a", "col_b"]
+        }
+      },
+      "block_order": ["column_row"]
+    }
+  ]
+}
+{% endschema %}

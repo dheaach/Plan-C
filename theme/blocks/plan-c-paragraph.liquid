@@ -1,0 +1,266 @@
+{% doc %}
+  Paragraph: rich text (bold, lists, inline styles when editor allows), alignment, block position, base color/size/weight.
+{% enddoc %}
+
+{% liquid
+  case block.settings.font_family
+    when 'sans'
+      assign pfont_stack = 'var(--font-family-site)'
+    when 'serif'
+      assign pfont_stack = 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif'
+    when 'mono'
+      assign pfont_stack = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
+    when 'custom'
+      assign pfont_stack = block.settings.font_family_custom | strip | replace: ';', '' | replace: '{', '' | replace: '}', ''
+      if pfont_stack == blank
+        assign pfont_stack = 'inherit'
+      endif
+    else
+      assign pfont_stack = 'inherit'
+  endcase
+  assign pfs = block.settings.font_size | default: 16
+  assign pfs_m = block.settings.font_size_mobile | default: 14
+  assign pfw = block.settings.font_weight | default: '400'
+  assign ptc = block.settings.color | default: '#222222'
+  assign pmw = block.settings.max_width | default: 100
+  if pmw > 100
+    assign pmw = 100
+  endif
+  if pmw < 10
+    assign pmw = 10
+  endif
+  assign pta = block.settings.text_align | default: 'left'
+  assign pbas = block.settings.block_align_self | default: 'auto'
+  assign pbw = block.settings.block_width | default: 'full'
+  assign pwmt = block.settings.margin_top | default: 0
+  assign pwmb = block.settings.margin_bottom | default: 0
+  assign pwpt = block.settings.padding_top | default: 0
+  assign pwpb = block.settings.padding_bottom | default: 0
+  assign pwpx = block.settings.padding_horizontal | default: 0
+%}
+
+<div
+  class="plan-c-widget plan-c-widget--paragraph plan-c-widget--text-{{ pta }} plan-c-widget--self-{{ pbas }} plan-c-widget--width-{{ pbw }}{% if block.settings.content == blank and request.design_mode == false %} plan-c-widget--empty{% endif %}"
+  style="
+    --plan-c-widget-mt: {{ pwmt }}px;
+    --plan-c-widget-mb: {{ pwmb }}px;
+    --plan-c-widget-pt: {{ pwpt }}px;
+    --plan-c-widget-pb: {{ pwpb }}px;
+    --plan-c-widget-pl: {{ pwpx }}px;
+    --plan-c-widget-pr: {{ pwpx }}px;
+    text-align: {{ pta }};
+    align-self: {{ pbas }};
+    {% if pbw == 'fit' %}width: fit-content; max-width: 100%;{% elsif pbw == 'auto' %}width: auto; max-width: 100%;{% else %}width: 100%;{% endif %}
+    {% if pmw < 100 %}max-width: {{ pmw }}%; margin-inline: auto;{% endif %}
+  "
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.content != blank %}
+    <div
+      class="plan-c-widget__paragraph rte{% if block.settings.use_fluid_typography %} plan-c-widget__text--responsive{% endif %}"
+      style="
+        color: {{ ptc }};
+        font-weight: {{ pfw }};
+        font-family: {{ pfont_stack }};
+        text-align: {{ pta }};
+        {% unless block.settings.use_fluid_typography %}font-size: {{ pfs }}px;{% endunless %}
+        {% if block.settings.use_fluid_typography %}--plan-c-text-fs-min: {{ pfs_m }}px; --plan-c-text-fs-max: {{ pfs }}px;{% endif %}
+      "
+    >
+      {{ block.settings.content }}
+    </div>
+  {% elsif request.design_mode %}
+    <div
+      class="plan-c-widget__paragraph rte{% if block.settings.use_fluid_typography %} plan-c-widget__text--responsive{% endif %}"
+      style="
+        color: {{ ptc }};
+        font-weight: {{ pfw }};
+        font-family: {{ pfont_stack }};
+        text-align: {{ pta }};
+        {% unless block.settings.use_fluid_typography %}font-size: {{ pfs }}px;{% endunless %}
+        {% if block.settings.use_fluid_typography %}--plan-c-text-fs-min: {{ pfs_m }}px; --plan-c-text-fs-max: {{ pfs }}px;{% endif %}
+      "
+    >
+      <span style="opacity:0.45;">Paragraph (add rich text)</span>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Paragraph",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Text",
+      "info": "Use the toolbar for bold, italic, lists, and links. If your store’s editor supports highlights or inline color/size, those styles are kept inside the text."
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "justify", "label": "Justify" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "block_align_self",
+      "label": "Position in row (flex align-self)",
+      "default": "auto",
+      "options": [
+        { "value": "auto", "label": "Auto" },
+        { "value": "flex-start", "label": "Start" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "stretch", "label": "Stretch" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "block_width",
+      "label": "Block width",
+      "default": "full",
+      "options": [
+        { "value": "full", "label": "Full (100%)" },
+        { "value": "auto", "label": "Auto" },
+        { "value": "fit", "label": "Fit content" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Max width (centered)",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "Text color",
+      "default": "#222222"
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "default": "400",
+      "options": [
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "use_fluid_typography",
+      "label": "Responsive font size (clamp mobile → desktop)",
+      "default": true,
+      "info": "Applies to the paragraph base size; bold or highlighted spans keep their own sizes when the editor adds them."
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 10,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size (desktop / max when fluid)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size mobile (min when fluid)",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "font_family",
+      "label": "Font",
+      "default": "inherit",
+      "options": [
+        { "value": "inherit", "label": "Inherit theme" },
+        { "value": "sans", "label": "Sans-serif" },
+        { "value": "serif", "label": "Serif" },
+        { "value": "mono", "label": "Monospace" },
+        { "value": "custom", "label": "Custom (CSS)" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "font_family_custom",
+      "label": "Custom font-family",
+      "info": "When Font is Custom."
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding left & right",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

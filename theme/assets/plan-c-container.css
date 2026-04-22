@@ -1,0 +1,181 @@
+/**
+ * Plan C — container shell: layout, background image/color, overlay, responsive.
+ */
+
+.plan-c-os-container {
+  position: relative;
+  width: 100%;
+  overflow: clip;
+  background: var(--plan-c-os-bg, transparent);
+  margin-top: var(--plan-c-os-mt, 0);
+  margin-bottom: var(--plan-c-os-mb, 0);
+}
+
+.plan-c-os-container__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.plan-c-os-container__media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: var(--plan-c-os-bg-size, cover);
+  object-position: var(--plan-c-os-bg-pos, center);
+}
+
+.plan-c-os-container__media-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--plan-c-os-overlay, transparent);
+  opacity: var(--plan-c-os-overlay-o, 0);
+}
+
+.plan-c-os-container__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: var(--plan-c-os-flex-dir, column);
+  flex-wrap: var(--plan-c-os-flex-wrap, nowrap);
+  align-items: var(--plan-c-os-align-items, stretch);
+  justify-content: var(--plan-c-os-justify, flex-start);
+  align-content: var(--plan-c-os-align-content, stretch);
+  gap: var(--plan-c-os-gap, 1rem);
+}
+
+@media screen and (max-width: 749px) {
+  .plan-c-os-container--stack-mobile .plan-c-os-container__inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.plan-c-os-container--width-page .plan-c-os-container__inner {
+  max-width: min(75rem, 100%);
+  padding-inline: var(--plan-c-os-px, 1.25rem);
+  padding-block: var(--plan-c-os-py, 1.5rem);
+}
+
+.plan-c-os-container--width-narrow .plan-c-os-container__inner {
+  max-width: min(48rem, 100%);
+  padding-inline: var(--plan-c-os-px, 1.25rem);
+  padding-block: var(--plan-c-os-py, 1.5rem);
+}
+
+.plan-c-os-container--width-full .plan-c-os-container__inner {
+  max-width: none;
+  padding-inline: var(--plan-c-os-px, clamp(1rem, 4vw, 2rem));
+  padding-block: var(--plan-c-os-py, 1.5rem);
+}
+
+.plan-c-os-container__placeholder {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 1.25rem;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 0.95rem;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 0.35rem;
+}
+
+/* Column block: optional background layer */
+.plan-c-column {
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--plan-c-col-mt, 0);
+  margin-bottom: var(--plan-c-col-mb, 0);
+}
+
+.plan-c-column__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.plan-c-column__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: var(--plan-c-col-bg-size, cover);
+  object-position: var(--plan-c-col-bg-pos, center);
+}
+
+.plan-c-column__bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--plan-c-col-overlay, transparent);
+  opacity: var(--plan-c-col-overlay-o, 0);
+}
+
+.plan-c-column__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Responsive typography for theme blocks (heading / paragraph) */
+.plan-c-widget__heading.plan-c-widget__text--responsive {
+  font-size: clamp(
+    var(--plan-c-text-fs-min, 1.125rem),
+    2.5vw + 0.5rem,
+    var(--plan-c-text-fs-max, 2rem)
+  );
+}
+
+.plan-c-widget__paragraph.plan-c-widget__text--responsive {
+  font-size: clamp(
+    var(--plan-c-text-fs-min, 0.9375rem),
+    1.2vw + 0.65rem,
+    var(--plan-c-text-fs-max, 1rem)
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Column row (nested inside container / layout — many columns in one band) */
+/* -------------------------------------------------------------------------- */
+
+.plan-c-column-row {
+  width: 100%;
+  min-width: 0;
+  margin-top: var(--plan-c-cr-mt, 0);
+  margin-bottom: var(--plan-c-cr-mb, 0);
+}
+
+.plan-c-column-row__inner {
+  display: flex;
+  flex-direction: var(--plan-c-cr-dir, row);
+  flex-wrap: var(--plan-c-cr-wrap, wrap);
+  align-items: var(--plan-c-cr-align, stretch);
+  justify-content: var(--plan-c-cr-justify, flex-start);
+  align-content: var(--plan-c-cr-align-content, stretch);
+  gap: var(--plan-c-cr-gap, 1rem);
+  width: 100%;
+  min-width: 0;
+}
+
+.plan-c-column-row--equal .plan-c-column-row__inner > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+@media screen and (max-width: 749px) {
+  .plan-c-column-row--stack-mobile .plan-c-column-row__inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .plan-c-column-row--stack-mobile.plan-c-column-row--equal .plan-c-column-row__inner > * {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}

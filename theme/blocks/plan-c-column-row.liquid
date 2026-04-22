@@ -1,0 +1,169 @@
+{% doc %}
+  Flex row inside Plan C container: add many Column blocks (and optional app blocks) in one group.
+{% enddoc %}
+
+{% liquid
+  assign cr_mt = block.settings.margin_top | default: 0
+  assign cr_mb = block.settings.margin_bottom | default: 0
+  case block.settings.flex_direction
+    when 'row_reverse'
+      assign cr_dir = 'row-reverse'
+    when 'column'
+      assign cr_dir = 'column'
+    when 'column_reverse'
+      assign cr_dir = 'column-reverse'
+    else
+      assign cr_dir = 'row'
+  endcase
+%}
+
+<div
+  class="plan-c-column-row{% if block.settings.equal_columns %} plan-c-column-row--equal{% endif %}{% if block.settings.stack_mobile %} plan-c-column-row--stack-mobile{% endif %}"
+  {{ block.shopify_attributes }}
+  style="
+    --plan-c-cr-mt: {{ cr_mt }}px;
+    --plan-c-cr-mb: {{ cr_mb }}px;
+    --plan-c-cr-gap: {{ block.settings.gap }}px;
+    --plan-c-cr-dir: {{ cr_dir }};
+    --plan-c-cr-wrap: {{ block.settings.flex_wrap }};
+    --plan-c-cr-align: {{ block.settings.align_items }};
+    --plan-c-cr-justify: {{ block.settings.justify_content }};
+    --plan-c-cr-align-content: {{ block.settings.align_content }};
+  "
+>
+  <div class="plan-c-column-row__inner">
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Column row",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "plan-c-column"
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Add multiple Column blocks here. Use inside Plan C container for a multi-column band; Heading and Paragraph stay outside this row if you want them full width."
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between columns",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "flex_direction",
+      "label": "Flex direction",
+      "default": "row",
+      "options": [
+        { "value": "row", "label": "Row" },
+        { "value": "row_reverse", "label": "Row reverse" },
+        { "value": "column", "label": "Column" },
+        { "value": "column_reverse", "label": "Column reverse" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "flex_wrap",
+      "label": "Flex wrap",
+      "default": "wrap",
+      "options": [
+        { "value": "nowrap", "label": "No wrap" },
+        { "value": "wrap", "label": "Wrap" },
+        { "value": "wrap-reverse", "label": "Wrap reverse" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_items",
+      "label": "Align items",
+      "default": "stretch",
+      "options": [
+        { "value": "stretch", "label": "Stretch" },
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "baseline", "label": "Baseline" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "justify_content",
+      "label": "Justify content",
+      "default": "flex-start",
+      "options": [
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "space-between", "label": "Space between" },
+        { "value": "space-around", "label": "Space around" },
+        { "value": "space-evenly", "label": "Space evenly" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_content",
+      "label": "Align content",
+      "default": "stretch",
+      "options": [
+        { "value": "stretch", "label": "Stretch" },
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "space-between", "label": "Space between" },
+        { "value": "space-around", "label": "Space around" },
+        { "value": "space-evenly", "label": "Space evenly" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "equal_columns",
+      "label": "Equal column widths (flex)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "Stack as one column on mobile",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Column row"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,317 @@
+{% comment %}
+  Container shell: display (flex), background color + image + overlay, padding. Theme blocks inside.
+{% endcomment %}
+
+{% liquid
+  case section.settings.inner_display
+    when 'row'
+      assign os_flex_dir = 'row'
+    when 'row_reverse'
+      assign os_flex_dir = 'row-reverse'
+    else
+      assign os_flex_dir = 'column'
+  endcase
+  assign overlay_o = section.settings.overlay_opacity | times: 1 | divided_by: 100.0
+%}
+
+<div
+  class="plan-c-os-container plan-c-os-container--width-{{ section.settings.width }}{% if section.settings.stack_inner_mobile %} plan-c-os-container--stack-mobile{% endif %}"
+  style="
+    --plan-c-os-mt: {{ section.settings.margin_top | default: 0 }}px;
+    --plan-c-os-mb: {{ section.settings.margin_bottom | default: 0 }}px;
+    {% if section.settings.background != blank %}--plan-c-os-bg: {{ section.settings.background }}; background-color: {{ section.settings.background }};{% endif %}
+    --plan-c-os-gap: {{ section.settings.gap }}px;
+    --plan-c-os-px: {{ section.settings.padding_x }}px;
+    --plan-c-os-py: {{ section.settings.padding_y }}px;
+    --plan-c-os-flex-dir: {{ os_flex_dir }};
+    --plan-c-os-flex-wrap: {{ section.settings.inner_wrap }};
+    --plan-c-os-align-items: {{ section.settings.align_items }};
+    --plan-c-os-justify: {{ section.settings.justify_content }};
+    --plan-c-os-align-content: {{ section.settings.align_content }};
+    {% if section.settings.background_position != blank %}--plan-c-os-bg-pos: {{ section.settings.background_position }};{% endif %}
+    --plan-c-os-bg-size: {{ section.settings.background_size }};
+    {% if section.settings.background_overlay != blank %}--plan-c-os-overlay: {{ section.settings.background_overlay }};{% endif %}
+    --plan-c-os-overlay-o: {{ overlay_o }};
+  "
+>
+  {% if section.settings.background_image != blank %}
+    <div class="plan-c-os-container__media" aria-hidden="true">
+      {{
+        section.settings.background_image
+        | image_url: width: 2400
+        | image_tag:
+          class: 'plan-c-os-container__media-img',
+          loading: 'lazy',
+          widths: '375, 750, 1100, 1500, 2000, 2400',
+          sizes: '100vw'
+      }}
+      {% if section.settings.background_overlay != blank %}
+        <div class="plan-c-os-container__media-overlay"></div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="plan-c-os-container__inner">
+    {% if section.blocks.size == 0 %}
+      <div class="plan-c-os-container__placeholder">
+        {% if request.design_mode %}
+          Add Column row (many columns in one band), single Column, Heading, Paragraph, or App blocks. Put multiple columns inside one Column row block. Section settings control outer background and flex.
+        {% endif %}
+      </div>
+    {% else %}
+      {% content_for 'blocks' %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Plan C container",
+  "tag": "section",
+  "class": "section-plan-c-container",
+  "max_blocks": 100,
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "plan-c-column-row"
+    },
+    {
+      "type": "plan-c-column"
+    },
+    {
+      "type": "plan-c-heading"
+    },
+    {
+      "type": "plan-c-paragraph"
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shell: flex, padding, background. Use Column row to add many column shells in one flex band (up to 100 blocks total in this section). Single Column, Heading, and Paragraph are separate blocks at this level."
+    },
+    {
+      "type": "header",
+      "content": "Layout (inner)"
+    },
+    {
+      "type": "select",
+      "id": "inner_display",
+      "label": "Flex direction",
+      "default": "column",
+      "options": [
+        { "value": "column", "label": "Column (stack)" },
+        { "value": "row", "label": "Row" },
+        { "value": "row_reverse", "label": "Row reverse" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "inner_wrap",
+      "label": "Flex wrap",
+      "default": "nowrap",
+      "options": [
+        { "value": "nowrap", "label": "No wrap" },
+        { "value": "wrap", "label": "Wrap" },
+        { "value": "wrap-reverse", "label": "Wrap reverse" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_items",
+      "label": "Align items",
+      "default": "stretch",
+      "options": [
+        { "value": "stretch", "label": "Stretch" },
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "baseline", "label": "Baseline" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "justify_content",
+      "label": "Justify content",
+      "default": "flex-start",
+      "options": [
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "space-between", "label": "Space between" },
+        { "value": "space-around", "label": "Space around" },
+        { "value": "space-evenly", "label": "Space evenly" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_content",
+      "label": "Align content (multi-line)",
+      "default": "stretch",
+      "options": [
+        { "value": "stretch", "label": "Stretch" },
+        { "value": "flex-start", "label": "Start" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "center", "label": "Center" },
+        { "value": "space-between", "label": "Space between" },
+        { "value": "space-around", "label": "Space around" },
+        { "value": "space-evenly", "label": "Space evenly" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_inner_mobile",
+      "label": "Stack inner flex as column on mobile",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color (optional)"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image (optional)"
+    },
+    {
+      "type": "select",
+      "id": "background_size",
+      "label": "Background image fit",
+      "default": "cover",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_position",
+      "label": "Background image position",
+      "default": "center center",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center", "label": "Left" },
+        { "value": "right center", "label": "Right" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_overlay",
+      "label": "Image overlay color (optional)"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Image overlay opacity",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Content width",
+      "default": "page",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "page", "label": "Page width" },
+        { "value": "narrow", "label": "Narrow" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "Space between blocks",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_x",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section margin bottom",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Plan C container",
+      "blocks": {},
+      "block_order": []
+    },
+    {
+      "name": "Plan C container — three columns",
+      "settings": {
+        "inner_display": "column"
+      },
+      "blocks": {
+        "column_row": {
+          "type": "plan-c-column-row",
+          "settings": {
+            "equal_columns": true,
+            "gap": 16
+          },
+          "blocks": {
+            "col_a": { "type": "plan-c-column" },
+            "col_b": { "type": "plan-c-column" },
+            "col_c": { "type": "plan-c-column" }
+          },
+          "block_order": ["col_a", "col_b", "col_c"]
+        }
+      },
+      "block_order": ["column_row"]
+    }
+  ]
+}
+{% endschema %}

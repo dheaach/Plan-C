@@ -1,0 +1,304 @@
+{% doc %}
+  Heading: H1–H6, alignment & block position, color, weight, semantic or custom sizing.
+{% enddoc %}
+
+{% liquid
+  case block.settings.heading_tag
+    when 'h1'
+      assign htag = 'h1'
+    when 'h2'
+      assign htag = 'h2'
+    when 'h3'
+      assign htag = 'h3'
+    when 'h4'
+      assign htag = 'h4'
+    when 'h5'
+      assign htag = 'h5'
+    when 'h6'
+      assign htag = 'h6'
+    else
+      assign htag = 'h2'
+  endcase
+  case block.settings.font_family
+    when 'sans'
+      assign font_stack = 'var(--font-family-site)'
+    when 'serif'
+      assign font_stack = 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif'
+    when 'mono'
+      assign font_stack = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
+    when 'custom'
+      assign font_stack = block.settings.font_family_custom | strip | replace: ';', '' | replace: '{', '' | replace: '}', ''
+      if font_stack == blank
+        assign font_stack = 'inherit'
+      endif
+    else
+      assign font_stack = 'inherit'
+  endcase
+  assign fs = block.settings.font_size | default: 32
+  assign fs_m = block.settings.font_size_mobile | default: 22
+  assign fw = block.settings.font_weight | default: '700'
+  assign tc = block.settings.color | default: '#1b2b4a'
+  assign semantic = false
+  if block.settings.heading_size_mode == 'tag_scale'
+    assign semantic = true
+  endif
+  assign mw = block.settings.max_width | default: 100
+  if mw > 100
+    assign mw = 100
+  endif
+  if mw < 10
+    assign mw = 10
+  endif
+  assign ta = block.settings.text_align | default: 'left'
+  assign bas = block.settings.block_align_self | default: 'auto'
+  assign bw = block.settings.block_width | default: 'full'
+  assign wmt = block.settings.margin_top | default: 0
+  assign wmb = block.settings.margin_bottom | default: 0
+  assign wpt = block.settings.padding_top | default: 0
+  assign wpb = block.settings.padding_bottom | default: 0
+  assign wpx = block.settings.padding_horizontal | default: 0
+%}
+
+<div
+  class="plan-c-widget plan-c-widget--heading plan-c-widget--text-{{ ta }} plan-c-widget--self-{{ bas }} plan-c-widget--width-{{ bw }}"
+  style="
+    --plan-c-widget-mt: {{ wmt }}px;
+    --plan-c-widget-mb: {{ wmb }}px;
+    --plan-c-widget-pt: {{ wpt }}px;
+    --plan-c-widget-pb: {{ wpb }}px;
+    --plan-c-widget-pl: {{ wpx }}px;
+    --plan-c-widget-pr: {{ wpx }}px;
+    text-align: {{ ta }};
+    align-self: {{ bas }};
+    {% if bw == 'fit' %}width: fit-content; max-width: 100%;{% elsif bw == 'auto' %}width: auto; max-width: 100%;{% else %}width: 100%;{% endif %}
+    {% if mw < 100 %}max-width: {{ mw }}%; margin-inline: auto;{% endif %}
+  "
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.text != blank or request.design_mode %}
+    <{{ htag }}
+      class="plan-c-widget__heading{% if semantic %} plan-c-widget__heading--semantic-{{ htag }}{% elsif block.settings.use_fluid_typography %} plan-c-widget__text--responsive{% endif %}"
+      style="
+        color: {{ tc }};
+        font-weight: {{ fw }};
+        font-family: {{ font_stack }};
+        {% unless semantic %}
+          {% unless block.settings.use_fluid_typography %}font-size: {{ fs }}px;{% endunless %}
+          {% if block.settings.use_fluid_typography %}--plan-c-text-fs-min: {{ fs_m }}px; --plan-c-text-fs-max: {{ fs }}px;{% endif %}
+        {% endunless %}
+      "
+    >
+      {% if block.settings.text != blank %}
+        {{ block.settings.text | escape | newline_to_br }}
+      {% else %}
+        <span style="opacity:0.45;font-weight:400;">Heading (add text)</span>
+      {% endif %}
+    </{{ htag }}>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Heading",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "HTML tag (H1–H6)",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_size_mode",
+      "label": "Font sizing",
+      "default": "tag_scale",
+      "options": [
+        { "value": "tag_scale", "label": "Scale with tag (H1 largest → H6 smallest)" },
+        { "value": "custom", "label": "Custom (ranges below)" }
+      ],
+      "info": "Tag always sets semantics (SEO). Tag scale sets visual size to match heading level."
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "justify", "label": "Justify" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "block_align_self",
+      "label": "Position in row (flex align-self)",
+      "default": "auto",
+      "options": [
+        { "value": "auto", "label": "Auto" },
+        { "value": "flex-start", "label": "Start" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "End" },
+        { "value": "stretch", "label": "Stretch" }
+      ],
+      "info": "When this row uses Flexbox, controls how this block sits on the cross axis."
+    },
+    {
+      "type": "select",
+      "id": "block_width",
+      "label": "Block width",
+      "default": "full",
+      "options": [
+        { "value": "full", "label": "Full (100%)" },
+        { "value": "auto", "label": "Auto" },
+        { "value": "fit", "label": "Fit content" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Max width (centered)",
+      "default": 100,
+      "info": "Below 100%, the heading stays centered in the column."
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "Text color",
+      "default": "#1b2b4a"
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "default": "700",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "use_fluid_typography",
+      "label": "Responsive font size (clamp mobile → desktop)",
+      "default": true,
+      "info": "Only used when Font sizing is “Custom”. Tag scale already uses responsive clamp per level."
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 12,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size (desktop / max when fluid)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 10,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size mobile (min when fluid)",
+      "default": 22
+    },
+    {
+      "type": "select",
+      "id": "font_family",
+      "label": "Font",
+      "default": "inherit",
+      "options": [
+        { "value": "inherit", "label": "Inherit theme" },
+        { "value": "sans", "label": "Sans-serif" },
+        { "value": "serif", "label": "Serif" },
+        { "value": "mono", "label": "Monospace" },
+        { "value": "custom", "label": "Custom (CSS)" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "font_family_custom",
+      "label": "Custom font-family",
+      "info": "When Font is Custom."
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding left & right",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}
