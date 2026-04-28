@@ -7,16 +7,12 @@
   From custom Liquid:
     {% render 'plan-c-header', logo: settings.logo, logo_max_width: 240, logo_max_height: 64, ... %}
 
-  Navigation typography (optional): nav_font (font_picker), nav_font_size, nav_font_weight,
-  nav_letter_spacing, nav_text_transform, nav_line_height, nav_link_color, nav_link_hover_color
+  Navigation typography (optional): nav_font (font_picker = font-family name only; load files in theme CSS/fonts),
+  nav_font_size, nav_font_weight, nav_letter_spacing, nav_text_transform, nav_line_height, nav_link_color, nav_link_hover_color
 
   Spacing (optional): section_margin_top, section_margin_bottom, announcement_padding_y/x, bar_padding_y/x,
   nav_row_padding_y/x (px; drives CSS variables on this root)
 {% endcomment %}
-
-{% if nav_font != blank %}
-  {{ nav_font | font_face: font_display: 'swap' }}
-{% endif %}
 
 {% liquid
   assign logo_src = logo

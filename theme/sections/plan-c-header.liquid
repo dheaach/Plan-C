@@ -138,14 +138,14 @@
     },
     {
       "type": "paragraph",
-      "content": "Font picker uses Shopify’s font library (includes Google Fonts). Shopify injects @font-face when needed. If Horizon still overrides links, Plan C uses a scoped rule with higher priority."
+      "content": "Navigation font name only (no @font-face in HTML). Use the same family as your global typography (e.g. Lato via typography-setup) or add @font-face in theme assets."
     },
     {
       "type": "font_picker",
       "id": "nav_font",
       "label": "Navigation font",
       "default": "lato_n4",
-      "info": "Shopify font library (includes Google Fonts). Fonts load automatically via font_face."
+      "info": "Sets font-family only. Ensure that face is loaded elsewhere (e.g. Google Fonts link in typography-setup)."
     },
     {
       "type": "range",
